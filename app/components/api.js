@@ -2,7 +2,7 @@
 // api.js
 export async function fetchWords(filters) {
 	const queryParams = new URLSearchParams(filters).toString();
-	const url = `/words?${queryParams}`;
+	const url = `/api/words?${queryParams}`;
 
 	try {
 		const response = await fetch(url);
@@ -19,7 +19,7 @@ export async function fetchWords(filters) {
 }
 
 export async function fetchAvailableOptions(schoolClass) {
-	const url = `/options?schoolClass=${schoolClass}`;
+	const url = `/api/options?schoolClass=${schoolClass}`;
 
 	try {
 		const response = await fetch(url);

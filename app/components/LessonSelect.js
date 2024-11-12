@@ -27,22 +27,24 @@ function LessonSelect({
 				value={lessonUnit}
 				onChange={e => setLessonUnit(Number(e.target.value))}
 			>
-				{availableLessons.map(lesson => (
-					<option key={lesson} value={lesson}>
-						Урок {lesson}
-					</option>
-				))}
+				{Array.isArray(availableLessons) &&
+					availableLessons.map(lesson => (
+						<option key={lesson} value={lesson}>
+							Урок {lesson}
+						</option>
+					))}
 			</select>
 
 			<select
 				value={unitStep}
 				onChange={e => setUnitStep(Number(e.target.value))}
 			>
-				{availableSteps.map(step => (
-					<option key={step} value={step}>
-						Шаг {step}
-					</option>
-				))}
+				{Array.isArray(availableSteps) &&
+					availableSteps.map(step => (
+						<option key={step} value={step}>
+							Шаг {step}
+						</option>
+					))}
 			</select>
 		</div>
 	);

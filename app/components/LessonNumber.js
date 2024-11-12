@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import { fetchWords, fetchAvailableOptions } from './api';
 import LessonList from './LessonList';
@@ -8,15 +8,18 @@ function Lesson() {
 	const [data, setData] = useState([]);
 	const [availableLessons, setAvailableLessons] = useState([]);
 	const [availableSteps, setAvailableSteps] = useState([]);
-	const [schoolClass, setSchoolClass] = useState(() => {
-		return JSON.parse(localStorage.getItem('schoolClass')) || 2;
-	});
-	const [lessonUnit, setLessonUnit] = useState(() => {
-		return JSON.parse(localStorage.getItem('lessonUnit')) || 1;
-	});
-	const [unitStep, setUnitStep] = useState(() => {
-		return JSON.parse(localStorage.getItem('unitStep')) || 1;
-	});
+	const [schoolClass, setSchoolClass] = useState(2);
+	const [lessonUnit, setLessonUnit] = useState(1);
+	const [unitStep, setUnitStep] = useState(1);
+
+	// Инициализация значений из localStorage при монтировании
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			setSchoolClass(JSON.parse(localStorage.getItem('schoolClass')) || 2);
+			setLessonUnit(JSON.parse(localStorage.getItem('lessonUnit')) || 1);
+			setUnitStep(JSON.parse(localStorage.getItem('unitStep')) || 1);
+		}
+	}, []);
 
 	// Загружаем доступные уроки и шаги при изменении класса или урока
 	useEffect(() => {
@@ -37,7 +40,7 @@ function Lesson() {
 		};
 
 		loadAvailableOptions();
-	}, [schoolClass, lessonUnit]); // Загрузка доступных опций при изменении класса или урока
+	}, [schoolClass, lessonUnit]);
 
 	// Загружаем уроки при изменении фильтров
 	useEffect(() => {
@@ -52,40 +55,44 @@ function Lesson() {
 		};
 
 		loadLessons();
-	}, [schoolClass, lessonUnit, unitStep]); // Загрузка данных при изменении фильтров
+	}, [schoolClass, lessonUnit, unitStep]);
 
 	const fetchStepsForLesson = async (lessonUnit, schoolClass) => {
 		const response = await fetch(
-			`/steps?lessonUnit=${lessonUnit}&schoolClass=${schoolClass}`
+			`/api/steps?lessonUnit=${lessonUnit}&schoolClass=${schoolClass}`
 		);
 		const steps = await response.json();
-		return steps; // Верните доступные шаги для выбранного урока
+		return steps;
 	};
 
 	// Сохраняем выбранные опции в localStorage
 	useEffect(() => {
-		localStorage.setItem('schoolClass', JSON.stringify(schoolClass));
-		localStorage.setItem('lessonUnit', JSON.stringify(lessonUnit));
-		localStorage.setItem('unitStep', JSON.stringify(unitStep));
-	}, [schoolClass, lessonUnit, unitStep]); // Сохранение в localStorage при изменении опций
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('schoolClass', JSON.stringify(schoolClass));
+			localStorage.setItem('lessonUnit', JSON.stringify(lessonUnit));
+			localStorage.setItem('unitStep', JSON.stringify(unitStep));
+		}
+	}, [schoolClass, lessonUnit, unitStep]);
 
 	// Очищаем localStorage при изменении schoolClass
 	const handleSchoolClassChange = newClass => {
 		setSchoolClass(newClass);
-		localStorage.clear(); // Очищаем localStorage
+		if (typeof window !== 'undefined') {
+			localStorage.clear();
+		}
 	};
 
 	return (
 		<div className='Lesson'>
 			<LessonSelect
 				schoolClass={schoolClass}
-				setSchoolClass={handleSchoolClassChange} // Используем обработчик изменения
+				setSchoolClass={handleSchoolClassChange}
 				lessonUnit={lessonUnit}
 				setLessonUnit={setLessonUnit}
 				unitStep={unitStep}
 				setUnitStep={setUnitStep}
-				availableLessons={availableLessons} // Передаем доступные уроки
-				availableSteps={availableSteps} // Передаем доступные шаги
+				availableLessons={availableLessons}
+				availableSteps={availableSteps}
 			/>
 			<LessonList data={data} />
 		</div>
