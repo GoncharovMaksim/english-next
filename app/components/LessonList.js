@@ -1,4 +1,3 @@
-'use client';
 function LessonList({ data }) {
 	if (!data) {
 		return 'Loading...';
